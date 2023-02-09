@@ -50,29 +50,27 @@ IPVersion Socket::GetIPVersion()
 	return ipversion;
 }
 
-bool Network::Initialize()
+PResult Socket::SetSocketOption(SocketOption option, BOOL value)
 {
-	WSADATA wsadata;
-	int result = WSAStartup(MAKEWORD(2, 2), &wsadata);
-	if (result != 0) //If winsock API failed to start up
+	int result = 0;
+	switch (option)
 	{
-		std::cerr << "Failed to start up the winsock API." << std::endl;
-		return false;
+	case SocketOption::TCP_NoDelay:
+		result = setsockopt(handle, IPPROTO_TCP, TCP_NODELAY, (const char*)&value, sizeof(value));
+		break;
+	default:
+		return PResult::P_NotYetImplemented;
 	}
 
-	if (LOBYTE(wsadata.wVersion) != 2 || HIBYTE(wsadata.wVersion) != 2) //If version received does not match version requested (2.2)
+	if (result != 0) //If an error occurred
 	{
-		std::cerr << "Could not find a usable version of the winsock api dll." << std::endl;
-		return false;
+		int error = WSAGetLastError();
+		return PResult::P_NotYetImplemented;
 	}
 
-	return true;
+	return PResult::P_Success;
 }
 
-void Network::Shutdown()
-{
-	WSACleanup();
-}
 
 #endif
 

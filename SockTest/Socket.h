@@ -3,6 +3,7 @@
 // Libraries
 #define WIN32_LEAN_AND_MEAN
 #include <WinSock2.h>
+#include "Enums.h"
 #include <c_library_v2/common/mavlink.h>
 #include <c_library_v2/common/mavlink_msg_altitude.h>
 #include <c_library_v2/common/mavlink_msg_gps_raw_int.h>
@@ -15,27 +16,6 @@
 #include <assert.h>
 #include <thread>
 
-
-// Enumerators
-enum Vehicle {
-	PrimaryAircraft,
-	PADA
-};
-
-enum IPVersion
-{
-	IPv4,
-	IPv6
-};
-
-enum PResult
-{
-	P_Success,
-	P_NotYetImplemented
-};
-
-typedef SOCKET SocketHandle;
-
 class Socket {
 public:
 	Socket(IPVersion ipversion = IPVersion::IPv4,
@@ -45,16 +25,10 @@ public:
 	SocketHandle GetHandle();
 	IPVersion GetIPVersion();
 private:
+	PResult SetSocketOption(SocketOption option, BOOL value);
 	Vehicle VehicleID;
 	IPVersion ipversion = IPVersion::IPv4;
 	SocketHandle handle = INVALID_SOCKET;
-};
-
-class Network
-{
-public:
-	static bool Initialize();
-	static void Shutdown();
 };
 
 #endif
