@@ -1,10 +1,22 @@
-#include "IncludeMe.h"
-#include <string>
+//Client Code [Tutorial 3] [Nonblocking] [Winsock]
+//Author: Jacob Preston 2019-05-11
+
+#include "Client.h"
 #include <iostream>
 
 using namespace MavSock;
-using namespace std;
 
-int main() {
-	int result = Network::Initialize();
+int main()
+{
+	Client client;
+	if (client.Connect(IPEndpoint("::1", 6112)))
+	{
+		while (client.IsConnected())
+		{
+			client.Frame();
+		}
+	}
+	Network::Shutdown();
+	system("pause");
+	return 0;
 }
