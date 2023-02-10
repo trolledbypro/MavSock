@@ -1,6 +1,9 @@
 #include "Socket.h"
 #include <assert.h>
 #include <iostream>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 
 namespace MavSock
 {
@@ -23,7 +26,9 @@ namespace MavSock
 
 		if (handle == INVALID_SOCKET)
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 
@@ -50,7 +55,9 @@ namespace MavSock
 		int result = closesocket(handle);
 		if (result != 0) //if error occurred while trying to close socket
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 
@@ -64,7 +71,9 @@ namespace MavSock
 		int result = bind(handle, (sockaddr*)(&addr), sizeof(sockaddr_in));
 		if (result != 0) //if an error occurred
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 
@@ -81,7 +90,9 @@ namespace MavSock
 		int result = listen(handle, backlog);
 		if (result != 0) //If an error occurred
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 
@@ -91,11 +102,17 @@ namespace MavSock
 	MSResult Socket::Accept(Socket & outSocket)
 	{
 		sockaddr_in addr = {};
+#ifdef _WIN32
 		int len = sizeof(sockaddr_in);
+#else
+		socklen_t len = sizeof(sockaddr_in);
+#endif		
 		SocketHandle acceptedConnectionHandle = accept(handle, (sockaddr*)(&addr), &len);
 		if (acceptedConnectionHandle == INVALID_SOCKET)
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 		IPEndpoint newConnectionEndpoint((sockaddr*)&addr);
@@ -111,7 +128,9 @@ namespace MavSock
 		int result = connect(handle, (sockaddr*)(&addr), sizeof(sockaddr_in));
 		if (result != 0) //if an error occurred
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 		return MSResult::MS_Success;
@@ -123,7 +142,9 @@ namespace MavSock
 
 		if (bytesSent == SOCKET_ERROR)
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 
@@ -141,7 +162,9 @@ namespace MavSock
 
 		if (bytesReceived == SOCKET_ERROR)
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 
@@ -204,10 +227,20 @@ namespace MavSock
 		unsigned long nonBlocking = 1;
 		unsigned long blocking = 0;
 		assert(isBlocking == nonBlocking);		// Forcing all sockets to be non-blocking
+#ifdef _WIN32
 		int result = ioctlsocket(handle, FIONBIO, isBlocking ? &blocking : &nonBlocking);
+#else
+		int flags = fcntl(fd, F_GETFL, 0);
+		if (flags == SOCKET_ERROR) {
+			return MSResult::MS_GenericError;
+		}
+		int result = fcntl(handle, F_SETFL, isBlocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK));
+#endif // _WIN32
 		if (result == SOCKET_ERROR)
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 		return MSResult();
@@ -227,7 +260,9 @@ namespace MavSock
 
 		if (result != 0) //If an error occurred
 		{
+#ifdef _WIN32
 			int error = WSAGetLastError();
+#endif
 			return MSResult::MS_GenericError;
 		}
 

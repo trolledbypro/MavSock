@@ -4,5 +4,9 @@
 
 namespace MavSock
 {
+#ifdef _WIN32
 	typedef SOCKET SocketHandle;
+#else
+	typedef int SocketHandle;
+#endif
 }

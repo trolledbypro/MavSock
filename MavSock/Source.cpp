@@ -6,5 +6,5 @@ using namespace MavSock;
 using namespace std;
 
 int main() {
-	int result = Network::Initialize()
+	int result = Network::Initialize();
 }

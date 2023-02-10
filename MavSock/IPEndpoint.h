@@ -2,7 +2,15 @@
 #include "IPVersion.h"
 #include <string>
 #include <vector>
+#ifdef _WIN32
 #include <WS2tcpip.h>
+#else
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#endif
 
 namespace MavSock
 {
