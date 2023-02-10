@@ -140,6 +140,7 @@
     <ClCompile Include="IPEndpoint.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Socket.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />

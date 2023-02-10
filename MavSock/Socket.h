@@ -25,6 +25,7 @@ namespace MavSock
 		MSResult RecvAll(void * destination, int numberOfBytes);
 		SocketHandle GetHandle();
 		IPVersion GetIPVersion();
+		MSResult SetBlocking(bool isBlocking);
 	private:
 		MSResult SetSocketOption(SocketOption option, BOOL value);
 		IPVersion ipversion = IPVersion::IPv4;

@@ -27,6 +27,11 @@ namespace MavSock
 			return MSResult::MS_GenericError;
 		}
 
+		if (SetBlocking(false) != MSResult::MS_Success)
+		{
+			return MSResult::MS_Success;
+		}
+
 		if (SetSocketOption(SocketOption::TCP_NoDelay, TRUE) != MSResult::MS_Success)
 		{
 			return MSResult::MS_GenericError;
@@ -193,6 +198,21 @@ namespace MavSock
 	{
 		return ipversion;
 	}
+
+	MSResult Socket::SetBlocking(bool isBlocking)
+	{
+		unsigned long nonBlocking = 1;
+		unsigned long blocking = 0;
+		assert(isBlocking == nonBlocking);		// Forcing all sockets to be non-blocking
+		int result = ioctlsocket(handle, FIONBIO, isBlocking ? &blocking : &nonBlocking);
+		if (result == SOCKET_ERROR)
+		{
+			int error = WSAGetLastError();
+			return MSResult::MS_GenericError;
+		}
+		return MSResult();
+	}
+
 	MSResult Socket::SetSocketOption(SocketOption option, BOOL value)
 	{
 		int result = 0;
