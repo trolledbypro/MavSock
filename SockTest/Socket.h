@@ -4,6 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <WinSock2.h>
 #include "Enums.h"
+#include "IPEndpoint.h"
 #include <c_library_v2/common/mavlink.h>
 #include <c_library_v2/common/mavlink_msg_altitude.h>
 #include <c_library_v2/common/mavlink_msg_gps_raw_int.h>
@@ -16,17 +17,25 @@
 #include <assert.h>
 #include <thread>
 
-class Socket {
+class Socket
+{
 public:
 	Socket(IPVersion ipversion = IPVersion::IPv4,
 		SocketHandle handle = INVALID_SOCKET);
 	PResult Create();
 	PResult Close();
+	PResult Bind(IPEndpoint endpoint);
+	PResult Listen(IPEndpoint endpoint, int backlog = 5);
+	PResult Accept(Socket& outSocket);
+	PResult Connect(IPEndpoint endpoint);
+	PResult Send(const void* data, int numberOfBytes, int& bytesSent);
+	PResult Recv(void* destination, int numberOfBytes, int& bytesReceived);
+	PResult SendAll(const void* data, int numberOfBytes);
+	PResult RecvAll(void* destination, int numberOfBytes);
 	SocketHandle GetHandle();
 	IPVersion GetIPVersion();
 private:
 	PResult SetSocketOption(SocketOption option, BOOL value);
-	Vehicle VehicleID;
 	IPVersion ipversion = IPVersion::IPv4;
 	SocketHandle handle = INVALID_SOCKET;
 };

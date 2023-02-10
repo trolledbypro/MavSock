@@ -2,7 +2,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <WinSock2.h>
 
-
 // Enumerators
 enum Vehicle {
 	PrimaryAircraft,
@@ -11,6 +10,7 @@ enum Vehicle {
 
 enum IPVersion
 {
+	Unknown,
 	IPv4,
 	IPv6
 };
@@ -18,7 +18,7 @@ enum IPVersion
 enum PResult
 {
 	P_Success,
-	P_NotYetImplemented
+	P_GenericError
 };
 
 enum SocketOption
@@ -27,3 +27,5 @@ enum SocketOption
 };
 
 typedef SOCKET SocketHandle;
+const int g_MaxPacketSize = 8192;
+
