@@ -24,6 +24,7 @@
     <ProjectGuid>{14ce1990-c9cd-4f92-a32a-d26c9f3fe3cc}</ProjectGuid>
     <RootNamespace>SockTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>MavSock</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -141,7 +142,12 @@
     <ClCompile Include="Socket.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Enums.h" />
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="IncludeMe.h" />
+    <ClInclude Include="IPVersion.h" />
+    <ClInclude Include="MSResult.h" />
+    <ClInclude Include="SocketHandle.h" />
+    <ClInclude Include="SocketOption.h" />
     <ClInclude Include="IPEndpoint.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Socket.h" />

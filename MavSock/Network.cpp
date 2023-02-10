@@ -1,7 +1,7 @@
 #include "Network.h"
-#include "Socket.h"
+#include <iostream>
 
-bool Network::Initialize()
+bool MavSock::Network::Initialize()
 {
 	WSADATA wsadata;
 	int result = WSAStartup(MAKEWORD(2, 2), &wsadata);
@@ -20,7 +20,7 @@ bool Network::Initialize()
 	return true;
 }
 
-void Network::Shutdown()
+void MavSock::Network::Shutdown()
 {
 	WSACleanup();
 }
