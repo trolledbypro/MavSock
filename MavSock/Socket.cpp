@@ -22,7 +22,7 @@ namespace MavSock
 			return MSResult::MS_GenericError;
 		}
 
-		handle = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); //attempt to create socket
+		handle = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); //attempt to create socket
 
 		if (handle == INVALID_SOCKET)
 		{
@@ -35,11 +35,6 @@ namespace MavSock
 		if (SetBlocking(false) != MSResult::MS_Success)
 		{
 			return MSResult::MS_Success;
-		}
-
-		if (SetSocketOption(SocketOption::TCP_NoDelay, TRUE) != MSResult::MS_Success)
-		{
-			return MSResult::MS_GenericError;
 		}
 
 		return MSResult::MS_Success;
@@ -151,6 +146,22 @@ namespace MavSock
 		return MSResult::MS_Success;
 	}
 
+	MSResult Socket::SendTo(const void* data, int numberOfBytes, int& bytesSent, IPEndpoint endpoint)
+	{
+		sockaddr_in addr = endpoint.GetSockaddrIPv4();
+		bytesSent = sendto(handle, (const char*)data, numberOfBytes, NULL, (sockaddr*)(&addr), sizeof(sockaddr_in));
+
+		if (bytesSent == SOCKET_ERROR)
+		{
+#ifdef _WIN32
+			int error = WSAGetLastError();
+#endif
+			return MSResult::MS_GenericError;
+		}
+
+		return MSResult::MS_Success;
+	}
+
 	MSResult Socket::Recv(void * destination, int numberOfBytes, int & bytesReceived)
 	{
 		bytesReceived = recv(handle, (char*)destination, numberOfBytes, NULL);
@@ -169,6 +180,23 @@ namespace MavSock
 		}
 
 		return MSResult::MS_Success;
+	}
+
+	int Socket::RecvFrom(void* destination, int bufferLength, int& bytesReceived, IPEndpoint endpoint)
+	{
+		sockaddr_in addr = endpoint.GetSockaddrIPv4();
+		int addr_size = sizeof(addr);
+		bytesReceived = recvfrom(handle, (char*)destination, bufferLength, NULL, (sockaddr*)(&addr), &addr_size);
+
+		if (bytesReceived == SOCKET_ERROR)
+		{
+#ifdef _WIN32
+			int error = WSAGetLastError();
+#endif
+			return -1;
+		}
+
+		return bytesReceived;
 	}
 
 	MSResult Socket::SendAll(const void * data, int numberOfBytes)
@@ -226,7 +254,7 @@ namespace MavSock
 	{
 		unsigned long nonBlocking = 1;
 		unsigned long blocking = 0;
-		assert(isBlocking == nonBlocking);		// Forcing all sockets to be non-blocking
+		//assert(isBlocking == nonBlocking);		// Forcing all sockets to be non-blocking
 #ifdef _WIN32
 		int result = ioctlsocket(handle, FIONBIO, isBlocking ? &blocking : &nonBlocking);
 #else

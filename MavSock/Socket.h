@@ -20,7 +20,9 @@ namespace MavSock
 		MSResult Accept(Socket & outSocket);
 		MSResult Connect(IPEndpoint endpoint);
 		MSResult Send(const void * data, int numberOfBytes, int & bytesSent);
+		MSResult SendTo(const void* data, int numberOfBytes, int& bytesSent, IPEndpoint endpoint);
 		MSResult Recv(void * destination, int numberOfBytes, int & bytesReceived);
+		int RecvFrom(void* destination, int numberOfBytes, int& bytesReceived, IPEndpoint endpoint);
 		MSResult SendAll(const void * data, int numberOfBytes);
 		MSResult RecvAll(void * destination, int numberOfBytes);
 		SocketHandle GetHandle();
